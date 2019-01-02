@@ -1,0 +1,94 @@
+body {
+  background:#2D3F47; margin:0
+}
+
+p {
+  font-family: monospace;
+  color: lightgray;
+  text-align: center;
+}
+
+a {
+  font-family: monospace;
+  color: lightgray;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 2em;
+  margin-top: 50px;
+  margin-bottom: 0.67em;
+  font-weight: normal;
+  font-family: monospace;
+  color: lightgray;
+  text-align: center;
+}
+
+
+h2 {
+  font-size: 18px;
+  font-weight: normal;
+  font-family: monospace;
+  color: lightgray;
+  text-align: center;
+}
+
+.timelinetitle {
+  font-size: 18px;
+  font-weight: normal;
+  font-family: monospace;
+  text-align: center;
+}
+
+.outer-div {
+  padding: 30px;
+}
+
+#explainer {
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+#svg1 {
+  display:block; position: relative;
+  left:5%; width:90%; height:25%; background:#2D3F47;
+}
+
+#svg2 {
+  display:block; position: relative;
+  left:5%; width:90%; height: 25%; background:#2D3F47;
+}
+
+#svg3 {
+  display:block; position:relative;
+  top:95%; left:5%; width:90%; height:25%; background:#2D3F47;
+}
+
+#svg4 {
+  display:block; position:relative;
+  top:105%; left:5%; width:90%; height:25%; background:#2D3F47;
+}
+
+#svg5 {
+  display:block; position:relative;
+  top:125%; left:5%; width:90%; height:25%; background:#2D3F47;
+}
+
+#svg6 {
+  display:block; position:relative;
+  top:145%; left:5%; width:90%; height:25%; background:#2D3F47;
+}
+
+#svg7 {
+  display:block; position:relative;
+  top:165%; left:5%; width:90%; height:25%; background:#2D3F47;
+}
+
+#svg8 {
+  display:block; position:relative;
+  top:185%; left:5%; width:90%; height:40%; background:#2D3F47;
+}
+
+text {
+  stroke: "teal", font-size: 12px; font-family: "sans-serif";
+}

@@ -1,0 +1,474 @@
+<!doctype html>
+<html>
+<head>
+  <title>Era of Discontent</title>
+
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+
+    <h1>Era of Discontent</h1>
+    <h2>364 days of protests, rallies, demonstrations and crowds.</h2>
+
+    <p>created by Sally Gao</p>
+
+    <div class="outer-div"><div id="explainer">
+    <p>This visualization shows how many Americans rallied for and against immigration, race, Donald Trump, police brutality, guns, the environment, LGBTQ rights and reproductive rights between Feb 1, 2017 and January 31, 2018.</p>
+    <p>All data were obtained from the <a href="https://sites.google.com/view/crowdcountingconsortium/home" target="_blank">Crowd Counting Consortium.</a></p>
+    <p>Each bubble represents an event. Larger bubble = bigger crowd size. Hover for details.</p>
+  </div></div>
+
+    <svg id="svg1"></svg>
+    <svg id="svg2"></svg>
+    <svg id="svg3"></svg>
+    <svg id="svg4"></svg>
+    <svg id="svg5"></svg>
+    <svg id="svg6"></svg>
+    <svg id="svg7"></svg>
+    <svg id="svg8"></svg>
+
+    <script>
+
+    // get window width so we can size timelines
+    width = window.innerWidth;
+    rightspace = width * .85;
+
+    // scale for x-axis (time)
+    var xscale = d3.scaleLinear()
+             .domain([0, 364])
+             .range([20, rightspace]);
+
+    // scale for circle radius (crowd size)
+    var rscale = d3.scalePow()
+              .range([5, 70])
+              .exponent(.5);
+
+    var min_crowdsize = 50;
+
+    // append the SVGs
+    var svg1 = d3.select("#svg1");
+    var svg2 = d3.select("#svg2");
+    var svg3 = d3.select("#svg3");
+    var svg4 = d3.select("#svg4");
+    var svg5 = d3.select("#svg5");
+    var svg6 = d3.select("#svg6");
+    var svg7 = d3.select("#svg7");
+    var svg8 = d3.select("#svg8");
+
+    svg1.append("text")
+       .attr("y", 20)
+       .attr("x", "50%")
+       .attr('text-anchor', 'middle')
+       .attr("class", "timelinetitle")
+       .style("fill", "lightgray")
+       .text("Immigration");
+
+   svg2.append("text")
+      .attr("y", 20)
+      .attr("x", "50%")
+      .attr('text-anchor', 'middle')
+      .attr("class", "timelinetitle")
+      .style("fill", "lightgray")
+      .text("Race");
+
+    svg3.append("text")
+       .attr("y", 20)
+       .attr("x", "50%")
+       .attr('text-anchor', 'middle')
+       .attr("class", "timelinetitle")
+       .style("fill", "lightgray")
+       .text("Trump");
+
+     svg4.append("text")
+        .attr("y", 20)
+        .attr("x", "50%")
+        .attr('text-anchor', 'middle')
+        .attr("class", "timelinetitle")
+        .style("fill", "lightgray")
+        .text("Police Brutality");
+
+    svg5.append("text")
+       .attr("y", 20)
+       .attr("x", "50%")
+       .attr('text-anchor', 'middle')
+       .attr("class", "timelinetitle")
+       .style("fill", "lightgray")
+       .text("Guns");
+
+   svg6.append("text")
+      .attr("y", 20)
+      .attr("x", "50%")
+      .attr('text-anchor', 'middle')
+      .attr("class", "timelinetitle")
+      .style("fill", "lightgray")
+      .text("Environment");
+
+    svg7.append("text")
+       .attr("y", 20)
+       .attr("x", "50%")
+       .attr('text-anchor', 'middle')
+       .attr("class", "timelinetitle")
+       .style("fill", "lightgray")
+       .text("LGBTQ");
+
+     svg8.append("text")
+        .attr("y", 20)
+        .attr("x", "50%")
+        .attr('text-anchor', 'middle')
+        .attr("class", "timelinetitle")
+        .style("fill", "lightgray")
+        .text("Reproductive Rights");
+
+    // define tooltip
+    var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("padding", "5px")
+        .style("background-color", "lightsteelblue")
+        .style("border-radius", "6px")
+        .style("text-align", "center")
+        .style("font-family", "Arial")
+        .style("font-size", "10px")
+        .style("width", "200px")
+        .style("opacity", .85)
+        .text("");
+
+    // add immigration timeline
+    d3.csv("immigration.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg1.selectAll("circle")
+                .data(data
+                .sort(function(a, b) { return b.BestGuess - a.BestGuess; })
+              )
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    // add race timeline
+    d3.csv("race.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg2.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+
+    // add Trump timeline
+    d3.csv("trump.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg3.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+
+    // add Police timeline
+    d3.csv("police.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg4.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    // add guns timeline
+    d3.csv("guns.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg5.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    // add environment timeline
+    d3.csv("environment.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg6.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    // add lgbt timeline
+    d3.csv("lgbt.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg7.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    // add Reproductive rights timeline
+    d3.csv("reproductive.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg8.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    </script>
+</body>
+</html>
