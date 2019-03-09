@@ -36,6 +36,7 @@ img {
 }
 
 #intro h1 {
+	padding-top: 10px;
 	font-size: 23px;
 	font-weight: bold;
 	line-height: 23px;
@@ -47,10 +48,13 @@ img {
 	line-height: 23px;
 }
 
-p {
-	font-size: 14px;
+#intro p {
+	padding-top: 25px;
+	text-align: center;
+	font-size: 15px;
 	font-weight: 400;
 	line-height: 23px;
+	word-spacing: 30px;
 }
 
 /*ITEMS CONTAINER*/
@@ -72,4 +76,9 @@ p {
 
 .container > div a:hover{
 	color: black;
+}
+
+.container > div h4{
+	font-size: 11px;
+	display: inline;
 }
